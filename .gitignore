@@ -1,0 +1,5 @@
+.idea
+.DSStore
+*.sqlite3
+*.pyc
+_pycache
