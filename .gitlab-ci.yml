@@ -53,6 +53,6 @@ deploy:
   stage: deploy
   script:
     - echo "update/restart"
-    - docker-compose -f docker-compose.deploy.yml pull
-    - docker-compose -f docker-compose.deploy.yml down --remove-orphans
-    - docker-compose -f docker-compose.deploy.yml up -d
+    - docker compose -f docker-compose.deploy.yml pull
+    - docker compose -f docker-compose.deploy.yml down --remove-orphans
+    - docker compose -f docker-compose.deploy.yml up -d
