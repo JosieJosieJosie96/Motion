@@ -5,6 +5,7 @@ FROM continuumio/miniconda3:latest
 COPY ./backend/requirements.yml /backend/requirements.yml
 
 COPY ./scripts /scripts
+RUN sed -i 's/\r$//' /scripts/dev.sh
 RUN chmod +x ./scripts #execute rights on whole scripts dic
 
 # create the environment inside the docker container
