@@ -3,6 +3,7 @@ from .models import User
 from django.contrib.auth.admin import UserAdmin
 
 
+# noinspection GrazieInspection
 @admin.register(User)
 class UserAdmin(UserAdmin):
     readonly_fields = ('date_joined',)
