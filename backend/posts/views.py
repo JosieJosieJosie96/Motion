@@ -79,7 +79,7 @@ class CreateLike(GenericAPIView):
     queryset = Post.objects.all()
     lookup_url_kwarg = 'post_id'
 
-    def post(self, request, post_id):
+    def post(self, request):
         # get_object will return the object from the provided queryset that matches the post_id from the url
         post_to_save = self.get_object()
         user = request.user
