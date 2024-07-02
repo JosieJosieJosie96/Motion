@@ -1,3 +1,4 @@
+# noinspection GrazieInspection
 """
 ASGI config for project project.
 
