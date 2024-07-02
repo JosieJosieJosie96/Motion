@@ -39,15 +39,10 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
 
-<<<<<<< HEAD
-    #apps
     'user',
     'posts',
-=======
-    'user',
-
+    'FriendRequest',
     'rest_framework',
->>>>>>> main
 ]
 
 MIDDLEWARE = [
