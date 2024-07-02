@@ -1,7 +1,6 @@
 
 from rest_framework.generics import ListAPIView, GenericAPIView, ListCreateAPIView, \
     RetrieveUpdateDestroyAPIView
-from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from models import Post
 from backend.posts.serializers import PostSerializer
@@ -32,7 +31,6 @@ class RetrieveUpdateDestroyPost(RetrieveUpdateDestroyAPIView):
     queryset = Post.objects.all()
     serializer_class = PostSerializer
     lookup_url_kwarg = 'post_id'
-
 
 
 class ListPostsUser(ListAPIView):

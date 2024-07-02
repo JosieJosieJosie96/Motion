@@ -1,6 +1,6 @@
 from rest_framework import serializers
 from models import Post
-from posts.serializers import UserSerializer
+from backend.user.serializers import UserSerializer
 
 
 class PostSerializer(serializers.ModelSerializer):
@@ -8,7 +8,6 @@ class PostSerializer(serializers.ModelSerializer):
     logged_in_user_liked = serializers.SerializerMethodField()
     is_from_logged_in_user = serializers.SerializerMethodField()
     amount_of_likes = serializers.SerializerMethodField()
-
 
     def get_logged_in_user_liked(self, post):
         user = self.context['request'].user
