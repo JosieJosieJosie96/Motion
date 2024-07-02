@@ -39,8 +39,9 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
 
-    'user',
 
+    'user',
+    'FriendRequest',
     'rest_framework',
 ]
 
@@ -148,7 +149,6 @@ SIMPLE_JWT = {
 # user should be the name of your app, User should be the name of your model
 AUTH_USER_MODEL = 'user.User'
 
-# auto email config
 DEFAULT_FROM_EMAIL = os.environ.get('DEFAULT_FROM_EMAIL')
 EMAIL_USE_TLS = os.environ.get('EMAIL_USE_TLS')
 EMAIL_HOST = os.environ.get('EMAIL_HOST')
