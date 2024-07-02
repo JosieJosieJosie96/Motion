@@ -23,7 +23,7 @@ services:
       - postgres_data:/var/lib/postgresql/data
 
   nginx:
-    image: niginx:latest
+    image: nginx:latest
     ports:
       - '80:80'
       - '443:443'
