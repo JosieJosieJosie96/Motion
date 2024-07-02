@@ -30,6 +30,7 @@ services:
     volumes:
       - static_files:/static-files
       - media_files:/media-files
+      - ./nginx:/etc/nginx/conf.d/
 
 
 volumes:
