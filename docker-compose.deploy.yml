@@ -11,6 +11,9 @@ services:
     command: "sh /scripts/prod.sh"
     depends_on:
       - postgres
+    volumes:
+      - static_files:/static-files
+      - media_files:/media-files
 
   postgres:
     image: postgres:latest
@@ -19,6 +22,17 @@ services:
     volumes:
       - postgres_data:/var/lib/postgresql/data
 
+  nginx:
+    image: niginx:latest
+    ports:
+      - '80:80'
+      - '443:443'
+    volumes:
+      - static_files:/static-files
+      - media_files:/media-files
+
 
 volumes:
   postgres_data:
+  static_files:
+  media_files:
