@@ -1,3 +1,4 @@
+# noinspection GrazieInspection
 """
 WSGI config for project project.
 
