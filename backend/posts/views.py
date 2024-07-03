@@ -2,8 +2,8 @@
 from rest_framework.generics import ListAPIView, GenericAPIView, ListCreateAPIView, \
     RetrieveUpdateDestroyAPIView
 from rest_framework.response import Response
-from models import Post
-from backend.posts.serializers import PostSerializer
+from posts.models import Post
+from posts.serializers import PostSerializer
 
 
 class ListCreatePosts(ListCreateAPIView):
