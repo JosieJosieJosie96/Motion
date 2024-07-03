@@ -23,7 +23,7 @@ class PostSerializer(serializers.ModelSerializer):
 
     @staticmethod
     def get_amount_of_likes(post):
-        return post.liked_by.all().count()
+        return post.liked_by_users.all().count()
 
     class Meta:
         model = Post

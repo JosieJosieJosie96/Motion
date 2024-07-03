@@ -33,7 +33,7 @@ class User(AbstractUser):
     # )
     #
 
-    liked_posts = models.ManyToManyField(verbose_name='liked posts', to='posts.Post', related_name='liked_by', blank=True)
+    liked_posts = models.ManyToManyField(verbose_name='liked posts', to='posts.Post', related_name='liked_by_users', blank=True)
 
     code = models.CharField(max_length=12, default=code_generator)
     email = models.EmailField(unique=True)

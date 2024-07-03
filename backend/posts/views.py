@@ -1,8 +1,10 @@
 
 from rest_framework.generics import ListAPIView, GenericAPIView, ListCreateAPIView, \
     RetrieveUpdateDestroyAPIView
+from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from .models import Post
+from user.permissions import IsOwnerOrReadOnly
 
 from .serializers import PostSerializer
 
@@ -32,6 +34,7 @@ class RetrieveUpdateDestroyPost(RetrieveUpdateDestroyAPIView):
     queryset = Post.objects.all()
     serializer_class = PostSerializer
     lookup_url_kwarg = 'post_id'
+    permission_classes = [IsAuthenticated, IsOwnerOrReadOnly]
 
 
 class ListPostsUser(ListAPIView):
@@ -84,8 +87,8 @@ class CreateLike(GenericAPIView):
         # get_object will return the object from the provided queryset that matches the post_id from the url
         post_to_save = self.get_object()
         user = request.user
-        if post_to_save in user.liked_posts.all():
-            user.liked_posts.remove(post_to_save)
+        if post_to_save in user.liked_by_users.all():
+            user.liked_by_users.remove(post_to_save)
             return Response(self.get_serializer(instance=post_to_save).data)
         user.liked_posts.add(post_to_save)
         return Response(self.get_serializer(instance=post_to_save).data)
