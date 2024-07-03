@@ -7,6 +7,11 @@ class PostAdmin(admin.ModelAdmin):
     list_filter = ['user']
     search_fields = ['title']
     ordering = ['title']
+    fieldsets = (
+        (None, {
+            'fields': ('title', 'content', 'user', 'liked_by')
+        }),
+    )
 
 
 admin.site.register(Post, PostAdmin)

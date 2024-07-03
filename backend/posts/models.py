@@ -33,8 +33,12 @@ class Post(models.Model):
         auto_now_add=True,
     )
 
-
-
+    liked_by = models.ManyToManyField(
+        verbose_name='liked_by',
+        to=User,
+        related_name='liked_posts',
+        blank=True,
+    )
     shared_by = models.ManyToManyField(
         User,
         related_name='shared_posts',
@@ -46,10 +50,7 @@ class Post(models.Model):
         return f"{self.user}: {self.content[:50]} ..."
 
     def share_post(self, user):
-
         if not self.shared_by.filter(id=user.id).exists():
             self.shared_by.create(user)
             self.save()
         return self
-
-
