@@ -1,5 +1,6 @@
 from django.contrib.auth import get_user_model
 from django.core.mail import send_mail
+from django.db.models import Q
 from django.db.models.signals import post_save
 from django.dispatch import receiver
 from rest_framework.generics import GenericAPIView, CreateAPIView, UpdateAPIView
@@ -128,3 +129,12 @@ class FollowUnfollowUser(GenericAPIView):
             return Response(self.get_serializer(instance=target_user).data)
         user.followers.add(target_user)
         return Response(self.get_serializer(instance=target_user).data)
+
+class UserSearchView(ListAPIView):
+    permission_classes = (IsAuthenticated,)
+    serializer_class = UserSerializer
+
+    def get_queryset(self):
+        search_str = self.request.query_params.get('search', None)
+        return User.objects.filter(Q(first_name__icontains=search_str) | Q(last_name__icontains=search_str) | Q(
+            username__icontains=search_str))
