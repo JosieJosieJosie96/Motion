@@ -1,10 +1,12 @@
+from django.db.models import Q
 from rest_framework import status
-from rest_framework.generics import GenericAPIView, RetrieveUpdateDestroyAPIView
+from rest_framework.generics import GenericAPIView, RetrieveUpdateDestroyAPIView, ListAPIView
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 
 from user.models import User
 from user.permissions import IsOwnerOrReadOnly
+from user.serializers import UserSerializer
 from .models import FriendRequest
 from .serializers import FriendRequestSerializer
 
@@ -66,3 +68,20 @@ class UpdateGetDeleteFriendRequestView(RetrieveUpdateDestroyAPIView):
             return Response(status=status.HTTP_204_NO_CONTENT)
         else:
             return Response({'error': 'You are not authorized'}, status=status.HTTP_404_NOT_FOUND)
+
+
+class ListAllFriendsView(ListAPIView):
+    permission_classes = (IsAuthenticated,)
+    serializer_class = UserSerializer
+
+    def get_queryset(self):
+        friend_requests = FriendRequest.objects.filter(
+            (Q(requester_id=self.request.user.id) | Q(friend_id=self.request.user.id)) & Q(
+                status=FriendRequest.ACCEPTED))
+        user_ids = set()
+        for friend_request in friend_requests:
+            if friend_request.friend_id == self.request.user.id:
+                user_ids.add(friend_request.requester_id)
+            else:
+                user_ids.add(friend_request.friend_id)
+        return User.objects.filter(id__in=user_ids)
