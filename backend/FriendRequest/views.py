@@ -1,70 +1,68 @@
-from django.contrib.auth import get_user_model
 from rest_framework import status
-from rest_framework.exceptions import NotFound
-from rest_framework.generics import GenericAPIView
+from rest_framework.generics import GenericAPIView, RetrieveUpdateDestroyAPIView
+from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
+
+from user.models import User
+from user.permissions import IsOwnerOrReadOnly
 from .models import FriendRequest
 from .serializers import FriendRequestSerializer
 
-User = get_user_model()
 
-
-class FriendRequestListView(GenericAPIView):
-    queryset = FriendRequest.objects.all()
+class SendFriendRequestView(GenericAPIView):
     serializer_class = FriendRequestSerializer
-
-    def get(self, request, *args, **kwargs):
-        friend_requests = FriendRequest.objects.filter(user_friends=request.user)
-        serializer = self.get_serializer(friend_requests, many=True)
-        return Response(serializer.data, status=status.HTTP_200_OK)
+    permission_classes = (IsAuthenticated,)
 
     def post(self, request, *args, **kwargs):
-        to_user_id = request.data.get('to_user_id')
-        if not to_user_id:
-            return Response({'to_user_id is required'}, status=status.HTTP_400_BAD_REQUEST)
+        requester = self.request.user
 
         try:
-            to_user = User.objects.get(pk=to_user_id)
-        except User.DoesNotExist:
-            return Response({'to_user_id does not exist'}, status=status.HTTP_400_BAD_REQUEST)
+            friend = User.objects.get(id=kwargs['user_id'])
+        except:
+            return Response({'error': 'User not found'}, status=status.HTTP_404_NOT_FOUND)
 
-        FriendRequest.objects.create(user=request.user, user_friends=to_user, status='pending')
-        return Response({'status': 'friend request sent'}, status=status.HTTP_201_CREATED)
+        if FriendRequest.objects.filter(friend_id=friend.id, requester_id=requester.id).exists():
+            return Response({'error': 'FriendRequest already exists'}, status=status.HTTP_400_BAD_REQUEST)
 
-    def patch(self, request, pk=None):
-        if not pk:
-            return Response({'pk is required'}, status=status.HTTP_400_BAD_REQUEST)
-
-        try:
-            friend_request = FriendRequest.objects.get(pk=pk)
-        except FriendRequest.DoesNotExist:
-            raise NotFound('FriendRequest not found')
-
-        friend_request.state = 'accepted'
+        friend_request = FriendRequest(requester=requester, friend_id=friend.id)
         friend_request.save()
-        return Response({'status': 'friend request accepted'}, status=status.HTTP_200_OK)
 
-    def delete(self, request, pk=None):
-        if not pk:
-            return Response({'pk is required'}, status=status.HTTP_400_BAD_REQUEST)
-
-        try:
-            friend_request = FriendRequest.objects.get(pk=pk)
-        except FriendRequest.DoesNotExist:
-            raise NotFound('FriendRequest not found')
-
-        friend_request.delete()
-        return Response({'status': 'friend request deleted'}, status=status.HTTP_204_NO_CONTENT)
+        serializer = FriendRequestSerializer(friend_request)
+        return Response(serializer.data, status=status.HTTP_201_CREATED)
 
 
-class FriendListView(GenericAPIView):
-    queryset = FriendRequest.objects.all()
+class UpdateGetDeleteFriendRequestView(RetrieveUpdateDestroyAPIView):
     serializer_class = FriendRequestSerializer
+    queryset = FriendRequest.objects.all()
+    permission_classes = (IsOwnerOrReadOnly,)
 
-    def get_queryset(self):
-        return FriendRequest.objects.filter(user=self.request.user, state='accepted')
+    def patch(self, request, *args, **kwargs):
+        try:
+            friend_request = FriendRequest.objects.get(id=kwargs['pk'])
+        except:
+            return Response({'error': 'FriendRequest not found'}, status=status.HTTP_404_NOT_FOUND)
+        if friend_request.status != FriendRequest.PENDING:
+            return Response({'error': 'FriendRequest already concluded'}, status=status.HTTP_400_BAD_REQUEST)
+        if friend_request.friend_id == self.request.user.id or self.request.user.is_staff is True:
+            serializer = FriendRequestSerializer(friend_request)
+            new_status = self.request.data.get('status')
+            if int(new_status):
+                friend_request.status = FriendRequest.ACCEPTED
+                friend_request.save()
+            else:
+                friend_request.status = FriendRequest.REJECTED
+                friend_request.save()
+            return Response(serializer.data, status=status.HTTP_200_OK)
+        else:
+            return Response({'error': 'You are not authorized'}, status=status.HTTP_404_NOT_FOUND)
 
-    def get(self, request, *args, **kwargs):
-        friends = self.get_queryset()
-        serializer = self.get_serializer(friends, many=True)
-        return Response(serializer.data, status=status.HTTP_200_OK)
+    def delete(self, request, *args, **kwargs):
+        try:
+            friend_request = FriendRequest.objects.get(id=kwargs['pk'])
+        except:
+            return Response({'error': 'FriendRequest not found'}, status=status.HTTP_404_NOT_FOUND)
+        if friend_request.requester_id == self.request.user.id or self.request.user.is_staff is True:
+            friend_request.delete()
+            return Response(status=status.HTTP_204_NO_CONTENT)
+        else:
+            return Response({'error': 'You are not authorized'}, status=status.HTTP_404_NOT_FOUND)
