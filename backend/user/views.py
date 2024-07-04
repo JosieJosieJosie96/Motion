@@ -6,7 +6,7 @@ from rest_framework.generics import GenericAPIView, CreateAPIView, UpdateAPIView
 from rest_framework.permissions import AllowAny
 from rest_framework.response import Response
 
-from user.serializers import UserSerializer, UserRegistrationSerializer
+from user.serializers import UserSerializer, UserRegistrationSerializer, FirstUserRegistrationSerializer
 from rest_framework import filters, permissions, status
 from rest_framework.generics import GenericAPIView, ListAPIView, RetrieveAPIView, RetrieveUpdateDestroyAPIView
 from rest_framework.permissions import IsAuthenticated
@@ -58,7 +58,7 @@ class ListOfFollowers(ListAPIView):
 
 
 class RegistrationView(CreateAPIView):
-    serializer_class = UserSerializer
+    serializer_class = FirstUserRegistrationSerializer
     permission_classes = (AllowAny,)
 
 

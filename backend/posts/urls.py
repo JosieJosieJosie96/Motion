@@ -6,7 +6,7 @@ from posts.views import ListCreatePosts
 
 urlpatterns = [
     path('', ListCreatePosts.as_view(), name='post-list'),
-    path('?search=<str:search_string>', ListSearchPosts.as_view(), name='post-list'),
+    path('?search=<str:search_string>', ListSearchPosts.as_view(), name='post-list-create-search'),
     path('<int:post_id>/', RetrieveUpdateDestroyPost.as_view(), name='retrieve-update-destroy-post'),
     path('<int:user_id>/', ListPostsUser.as_view(), name='list-posts-user'),
     path("following/", ListPostsFollowees.as_view(), name="list-posts-followees"),
