@@ -6,6 +6,8 @@ from django.contrib.auth.models import AbstractUser
 from django.db import models
 
 
+
+
 def code_generator(length=12):
     characters = string.ascii_letters + string.digits
     return ''.join(random.choice(characters) for i in range(length))
@@ -25,13 +27,10 @@ class User(AbstractUser):
         blank=True,
     )
 
-    # liked_posts = models.ManyToManyField(
-    #     verbose_name='liked posts',
-    #     to=Posts,
-    #     related_name='liked_by',
-    #     blank=True,
-    # )
-    #
+
+
+
+
 
     code = models.CharField(max_length=12, default=code_generator)
     email = models.EmailField(unique=True)
