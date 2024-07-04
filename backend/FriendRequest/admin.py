@@ -8,4 +8,4 @@ class FriendRequestAdmin(admin.ModelAdmin):
     list_filter = ['state']
 
 
-admin.site.register(FriendRequest, FriendRequestAdmin)
+admin.site.register(FriendRequest)
