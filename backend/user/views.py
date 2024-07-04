@@ -62,3 +62,5 @@ class RegistrationValidationView(GenericAPIView):
         user.save()
 
         return Response({'message': 'your registration is complete'}, status=status.HTTP_200_OK)
+
+

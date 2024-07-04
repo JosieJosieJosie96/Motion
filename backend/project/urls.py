@@ -19,6 +19,7 @@ from django.urls import path, include
 from rest_framework import permissions
 from drf_yasg.views import get_schema_view
 from drf_yasg import openapi
+from rest_framework_simplejwt import views as jwt_views
 
 schema_view = get_schema_view(
    openapi.Info(
@@ -36,9 +37,12 @@ schema_view = get_schema_view(
 urlpatterns = [
     path('backend/api/', schema_view.with_ui('swagger', cache_timeout=0), name='schema-swagger-ui'),
     path('admin/', admin.site.urls),
-    path('backend/', include('user.urls')),
-    path('backend/social/posts/', include('posts.urls')),
+    path('backend/api/', include('user.urls')),
+    path('backend/api/', include('posts.urls')),
+    path('backend/api/', include('FriendRequest.urls')),
+
     path('backend/auth/token/', jwt_views.TokenObtainPairView.as_view(), name='token_obtain_pair'),
     path('backend/auth/token/refresh/', jwt_views.TokenRefreshView.as_view(), name='token_refresh'),
     path('backend/auth/token/verify/', jwt_views.TokenVerifyView.as_view(), name='token_refresh'),
+
 ]
