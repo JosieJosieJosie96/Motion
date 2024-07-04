@@ -6,8 +6,6 @@ from django.contrib.auth.models import AbstractUser
 from django.db import models
 
 
-
-
 def code_generator(length=12):
     characters = string.ascii_letters + string.digits
     return ''.join(random.choice(characters) for i in range(length))
@@ -26,11 +24,6 @@ class User(AbstractUser):
         related_name='followers',
         blank=True,
     )
-
-
-
-
-
 
     code = models.CharField(max_length=12, default=code_generator)
     email = models.EmailField(unique=True)
