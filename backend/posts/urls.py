@@ -2,6 +2,8 @@ from django.urls import path
 from posts.views import ListSearchPosts, RetrieveUpdateDestroyPost, ListPostsUser, ListLikes, ListPostsFollowees, \
     CreateLike, ListCreatePosts
 
+from posts.views import ListCreatePosts
+
 urlpatterns = [
     path('', ListCreatePosts.as_view(), name='post-list'),
     path('?search=<str:search_string>', ListSearchPosts.as_view(), name='post-list'),
