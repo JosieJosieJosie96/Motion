@@ -5,10 +5,30 @@ User = get_user_model()
 
 
 class UserSerializer(serializers.ModelSerializer):
+    logged_in_user_is_following = serializers.SerializerMethodField()
+    amount_of_followers = serializers.SerializerMethodField()
+    amount_following = serializers.SerializerMethodField()
+
+    def get_logged_in_user_is_following(self, user):
+        return user in self.context['request'].user.followers.all()
+
+    def get_amount_of_followers(self, user):
+        return User.objects.filter(followers=user).count()
+
+    def get_amount_following(self, user):
+        return user.followers.count()
+
     class Meta:
         model = User
-        fields = ['id', 'email']
-        read_only_fields = ('date_joined', 'last_login')
+        fields = ['id', 'username', 'email', 'about_me', 'amount_of_followers', 'logged_in_user_is_following',
+                  'amount_following', ]
+        read_only_fields = ['email']
+
+
+class UserUpdateSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = User
+        fields = ['username', 'first_name', 'last_name']
 
 
 class UserRegistrationSerializer(serializers.ModelSerializer):

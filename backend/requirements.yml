@@ -10,4 +10,5 @@ dependencies:
     - flake8
     - gunicorn
     - django-cors-headers==4.3.1
+    - django-filter==24.2
     - drf-yasg==1.21.7
