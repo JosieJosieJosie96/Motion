@@ -1,8 +1,15 @@
 from django.urls import path
-from posts.views import ListCreatePosts, RetrieveUpdateDestroyPost
+from posts.views import ListSearchPosts, RetrieveUpdateDestroyPost, ListPostsUser, ListLikes, ListPostsFollowees, \
+    CreateLike, ListCreatePosts
 
 urlpatterns = [
-    path('social/posts/', ListCreatePosts.as_view(), name='post-list'),  # POST & GET: List all posts / create post
-    path('social/posts/<int:post_id>/', RetrieveUpdateDestroyPost.as_view(), name='specific-post'),  # GET, PATCH, DELETE: Specific post
+    path('', ListCreatePosts.as_view(), name='post-list'),
+    path('?search=<str:search_string>', ListSearchPosts.as_view(), name='post-list'),
+    path('<int:post_id>/', RetrieveUpdateDestroyPost.as_view(), name='retrieve-update-destroy-post'),
+    path('<int:user_id>/', ListPostsUser.as_view(), name='list-posts-user'),
+    path("following/", ListPostsFollowees.as_view(), name="list-posts-followees"),
+    # path("friends/", .as_view(), name="friends"),
+    path("likes/", ListLikes.as_view(), name="list-liked-posts"),
+    path("toggle-like/<int:post_id>/", CreateLike.as_view(), name="toggle-like")
 
 ]
