@@ -56,3 +56,9 @@ class UserRegistrationSerializer(serializers.ModelSerializer):
             instance.set_password(password)
         instance.save()
         return instance
+
+class FirstUserRegistrationSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = User
+        fields = ['id', 'email']
+        read_only_fields = ('date_joined', 'last_login')
