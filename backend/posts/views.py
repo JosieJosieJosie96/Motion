@@ -1,27 +1,24 @@
-
+from django.db.models import Q
 from rest_framework.generics import ListAPIView, GenericAPIView, ListCreateAPIView, \
     RetrieveUpdateDestroyAPIView
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
+
+
 from .models import Post
 from user.permissions import IsOwnerOrReadOnly
-from rest_framework import filters
+
 from .serializers import PostSerializer
 
 
-class ListSearchPosts(ListCreateAPIView):
-    queryset = Post.objects.all().order_by('created')
+class ListSearchPosts(ListAPIView):
+    permission_classes = (IsAuthenticated,)
     serializer_class = PostSerializer
-    permission_classes = [IsAuthenticated]
-    filter_backends = [filters.SearchFilter]
-    search_fields = ['content']
 
     def get_queryset(self):
-        queryset = super().get_queryset()
-        search_query = self.request.query_params.get('search', None)
-        if search_query:
-            queryset = queryset.filter(content__icontains=search_query)
-        return queryset
+        search_str = self.request.query_params.get('search', None)
+        return Post.objects.filter(Q(content__icontains=search_str) | Q(title__icontains=search_str))
+
 
 class ListCreatePosts(ListCreateAPIView):
     """
@@ -97,12 +94,12 @@ class CreateLike(GenericAPIView):
     queryset = Post.objects.all()
     lookup_url_kwarg = 'post_id'
 
-    def post(self, request):
+    def post(self, request, **kwargs):
         # get_object will return the object from the provided queryset that matches the post_id from the url
         post_to_save = self.get_object()
         user = request.user
         if post_to_save in user.liked_posts.all():
-            user.liked_by.remove(post_to_save)
+            user.liked_posts.remove(post_to_save)
             return Response(self.get_serializer(instance=post_to_save).data)
         user.liked_posts.add(post_to_save)
         return Response(self.get_serializer(instance=post_to_save).data)
