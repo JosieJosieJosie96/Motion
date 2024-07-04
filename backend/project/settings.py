@@ -49,6 +49,7 @@ INSTALLED_APPS = [
     'posts',
     'FriendRequest',
     'rest_framework',
+    'Comment',
 
     'drf_yasg',
 ]

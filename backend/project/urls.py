@@ -41,6 +41,7 @@ urlpatterns = [
     path('backend/api/social/', include('user.urls')),
     path('backend/api/social/posts/', include('posts.urls')),
     path('backend/api/social/', include('FriendRequest.urls')),
+    path('backend/api/', include('Comment.urls')),
 
     path('backend/auth/token/', jwt_views.TokenObtainPairView.as_view(), name='token_obtain_pair'),
     path('backend/auth/token/refresh/', jwt_views.TokenRefreshView.as_view(), name='token_refresh'),
