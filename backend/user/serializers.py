@@ -10,13 +10,17 @@ class UserSerializer(serializers.ModelSerializer):
     amount_following = serializers.SerializerMethodField()
 
     def get_logged_in_user_is_following(self, user):
-        return user in self.context['request'].user.followers.all()
+        request = self.context.get('request')
+        if request and hasattr(request, 'user'):
+            return user in request.user.follower.all()
+        return False
+# return user in self.context['request'].user.followers.all()
 
     def get_amount_of_followers(self, user):
         return User.objects.filter(followers=user).count()
 
     def get_amount_following(self, user):
-        return user.followers.count()
+        return user.followees.count()
 
     class Meta:
         model = User
