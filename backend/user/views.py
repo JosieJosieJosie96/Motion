@@ -129,12 +129,3 @@ class FollowUnfollowUser(GenericAPIView):
             return Response(self.get_serializer(instance=target_user).data)
         user.followers.add(target_user)
         return Response(self.get_serializer(instance=target_user).data)
-
-class UserSearchView(ListAPIView):
-    permission_classes = (IsAuthenticated,)
-    serializer_class = UserSerializer
-
-    def get_queryset(self):
-        search_str = self.request.query_params.get('search', None)
-        return User.objects.filter(Q(first_name__icontains=search_str) | Q(last_name__icontains=search_str) | Q(
-            username__icontains=search_str))
