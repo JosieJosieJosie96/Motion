@@ -20,6 +20,8 @@ ENV PATH /opt/conda/envs/motion-assignment/bin:$PATH
 # activates django env app like conda activate django_app
 RUN echo "source activate motion-assignment" >~/.bashrc
 
+ENV PYTHONDONTWRITEBYTECODE=1
+
 # pass all the files and folders from local folder to image
 COPY ./backend /backend
 
