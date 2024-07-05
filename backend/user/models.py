@@ -18,9 +18,9 @@ class User(AbstractUser):
         blank=True
     )
 
-    follower = models.ManyToManyField(
-        verbose_name='follower',
-        to=settings.AUTH_USER_MODEL,
+    followees = models.ManyToManyField(
+        verbose_name='followees',
+        to='self', symmetrical=False,
         related_name='followers',
         blank=True,
     )
