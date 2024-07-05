@@ -3,8 +3,9 @@ from rest_framework.generics import ListAPIView, GenericAPIView, ListCreateAPIVi
     RetrieveUpdateDestroyAPIView
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
-
-
+from django.db.models import Q
+from FriendRequest.models import FriendRequest
+from user.models import User
 from .models import Post
 from user.permissions import IsOwnerOrReadOnly
 
@@ -83,6 +84,25 @@ class ListLikes(ListAPIView):
 
     def get_queryset(self):
         return self.request.user.posts
+
+
+class ListFriendsPostsView(ListAPIView):
+    serializer_class = PostSerializer
+    permission_classes = [IsAuthenticated]
+
+    def get_queryset(self):
+        user = self.request.user
+
+        accepted_requests = FriendRequest.objects.filter(Q(requester=user) | Q(friend=user), status="accepted")
+        friends = User.objects.filter(
+            (Q(receiver__in=accepted_requests) | Q(requester__in=accepted_requests)) & ~Q(
+                id=user.id)).distinct()
+        return Post.objects.filter(user__in=friends).order_by("-created")
+
+    # def get(self, request, *args, **kwargs):
+    #     queryset = self.get_queryset()
+    #     serializer = self.serializer_class(queryset, many=True)
+    #     return self.get_paginated_response(serializer.data)
 
 
 class CreateLike(GenericAPIView):
