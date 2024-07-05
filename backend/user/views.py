@@ -1,5 +1,6 @@
 from django.contrib.auth import get_user_model
 from django.core.mail import send_mail
+from django.db.models import Q
 from django.db.models.signals import post_save
 from django.dispatch import receiver
 from rest_framework.generics import GenericAPIView, CreateAPIView, UpdateAPIView, get_object_or_404
@@ -109,13 +110,13 @@ class ListOfFollowing(ListAPIView):
     queryset = User.objects.all()
 
     def filter_queryset(self, queryset):
-        return self.request.user.followees.all()
+        return self.request.user.follower
 
 
 class FollowUnfollowUser(GenericAPIView):
     queryset = User.objects.all()
     serializer_class = UserSerializer
-    permission_classes = [IsAuthenticated]
+    permission_classes = [IsAuthenticated, IsOwnerOrReadOnly]
     lookup_url_kwarg = 'user_id'
 
     def get_object(self):
@@ -126,10 +127,8 @@ class FollowUnfollowUser(GenericAPIView):
     def post(self, request, **kwargs):
         target_user = self.get_object()
         user = request.user
-        if target_user in user.followees.all():
-            user.followees.remove(target_user)
+        if target_user in user.follower.all():
+            user.follower.remove(target_user)
             return Response(self.get_serializer(instance=target_user).data)
-        user.followees.add(target_user)
+        user.follower.add(target_user)
         return Response(self.get_serializer(instance=target_user).data)
-
-
