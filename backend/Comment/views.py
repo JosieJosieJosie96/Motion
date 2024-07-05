@@ -7,7 +7,7 @@ from .models import Comment
 from Comment.serializers import CommentSerializer
 
 
-class GetComments(ListCreateAPIView):
+class GetPostComments(ListCreateAPIView):
     permission_classes = (IsAuthenticated,)
     serializer_class = CommentSerializer
     def get_queryset(self, *args, **kwargs):

@@ -1,7 +1,7 @@
 from django.urls import path
 
-from Comment.views import GetComments
+from Comment.views import GetPostComments
 
 urlpatterns = [
-    path('social/comments/<int:post_id>/', GetComments.as_view()),
+    path('social/comments/<int:post_id>/', GetPostComments.as_view()),
 ]
