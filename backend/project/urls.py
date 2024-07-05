@@ -43,7 +43,4 @@ urlpatterns = [
     path('backend/api/social/', include('FriendRequest.urls')),
     path('backend/api/', include('Comment.urls')),
 
-    path('backend/auth/token/', jwt_views.TokenObtainPairView.as_view(), name='token_obtain_pair'),
-    path('backend/auth/token/refresh/', jwt_views.TokenRefreshView.as_view(), name='token_refresh'),
-    path('backend/auth/token/verify/', jwt_views.TokenVerifyView.as_view(), name='token_verify'),
 ]
