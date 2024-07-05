@@ -12,7 +12,7 @@ class UserSerializer(serializers.ModelSerializer):
     def get_logged_in_user_is_following(self, user):
         request = self.context.get('request')
         if request and hasattr(request, 'user'):
-            return user in request.user.follower.all()
+            return user in request.user.followers.all()
         return False
 # return user in self.context['request'].user.followers.all()
 
