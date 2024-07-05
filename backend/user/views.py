@@ -1,5 +1,6 @@
 from django.contrib.auth import get_user_model
 from django.core.mail import send_mail
+from django.db.models import Q
 from django.db.models.signals import post_save
 from django.dispatch import receiver
 from rest_framework.generics import GenericAPIView, CreateAPIView, UpdateAPIView
@@ -53,9 +54,6 @@ class ListOfFollowers(ListAPIView):
     queryset = User.objects.all()
     serializer_class = UserSerializer
 
-    def filter_queryset(self, queryset):
-        return self.request.user.followers
-
 
 class RegistrationView(CreateAPIView):
     serializer_class = FirstUserRegistrationSerializer
@@ -104,12 +102,17 @@ class RegistrationValidationView(GenericAPIView):
         return Response({'message': 'your registration is complete'}, status=status.HTTP_200_OK)
 
 
+
+    def filter_queryset(self, queryset):
+        return self.request.user.followers
+
+
 class ListOfFollowing(ListAPIView):
     serializer_class = UserSerializer
     queryset = User.objects.all()
 
     def filter_queryset(self, queryset):
-        return self.request.user.follower
+        return self.request.user.followers
 
 
 class FollowUnfollowUser(GenericAPIView):
@@ -121,8 +124,8 @@ class FollowUnfollowUser(GenericAPIView):
     def post(self, request, **kwargs):
         target_user = self.get_object()
         user = request.user
-        if target_user in user.follower.all():
-            user.follower.remove(target_user)
+        if target_user in user.followers.all():
+            user.followers.remove(target_user)
             return Response(self.get_serializer(instance=target_user).data)
-        user.follower.add(target_user)
+        user.followers.add(target_user)
         return Response(self.get_serializer(instance=target_user).data)
